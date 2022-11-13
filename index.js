@@ -12,7 +12,7 @@ const puppeteer = require('puppeteer')
 
 // Récupère les 5 dernières notes - page d'accueil
 
-app.get('/last_notes:login?:password?',cors(), async (req,res) => {
+app.get('/overview/last_notes:login?:password?',cors(), async (req,res) => {
     const {login, password} = req.query;
     async function scrape() {
         const browser = await puppeteer.launch({})
@@ -48,7 +48,7 @@ app.get('/last_notes:login?:password?',cors(), async (req,res) => {
 
 // Récupère les absences - page d'accueil
 
-app.get('/last_absences:login?:password?',cors(), async (req,res) => {
+app.get('/overview/last_absences:login?:password?',cors(), async (req,res) => {
     const {login, password} = req.query;
     async function scrape() {
         const browser = await puppeteer.launch({})
@@ -69,7 +69,6 @@ app.get('/last_absences:login?:password?',cors(), async (req,res) => {
                 type: object[0],
                 date:object[1]
             }
-            console.log(last_absences_items);
             last_absences.push(last_absences_items)
         });
         console.log(last_absences)
