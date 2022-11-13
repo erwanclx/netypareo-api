@@ -77,6 +77,36 @@ app.get('/overview/last_absences:login?:password?',cors(), async (req,res) => {
     scrape().catch(res.send)
 })
 
+// Récupère les contacts - page d'accueil
+
+app.get('/overview/contacts:login?:password?',cors(), async (req,res) => {
+    const {login, password} = req.query;
+    async function scrape() {
+        const browser = await puppeteer.launch({})
+        const page = await browser.newPage()
+        await page.goto('https://formations.cci-paris-idf.fr/IntNum/index.php')
+        await page.click('#login');
+        await page.keyboard.type(login);
+        await page.click('#password');
+        await page.keyboard.type(password);
+        await page.click('#btnSeConnecter');
+        await page.waitForNavigation();
+        await page.screenshot({path: 'screenshot.png'});
+        let personne = await page.evaluate(() => Array.from(document.querySelectorAll(".block-body.with-padding>dl>dd"), element => element.innerText));
+        let role = await page.evaluate(() => Array.from(document.querySelectorAll(".block-body.with-padding>dl>dt"), element => element.innerText));
+        let contacts = []
+        personne.forEach((element, index) => {
+            let contacts_items = {
+                role: role[index],
+                personne: element
+            }
+            contacts.push(contacts_items)
+        });
+        console.log(contacts)
+        res.send(contacts)
+    }
+    scrape().catch(res.send)
+})
 
 
 app.listen(8080, () => {
